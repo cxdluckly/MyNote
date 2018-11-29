@@ -1,0 +1,78 @@
+SqlServer 语句整理
+一:创建数据库 Create DateBase
+	Create DateBase (数据库名称)
+	On[Primary]分组    //主数据文件
+	(
+	   name=主数据文件名(mdf),
+	   filename='文件路径'
+	   [,size=文件初始大小]
+	   [,maxsize=文件最大长度|unlimited]
+	   [,filegrowth=文件增长速度]
+	),
+	(
+	   name=辅数据文件名(ndf),
+	   filename='文件路径'
+	   [,size=文件初始大小]
+	   [,maxsize=文件最大长度|unlimited]
+	   [,filegrowth=文件增长速度]
+	),
+	Filegroup (分组名称)//可以不分组
+	(
+	   name=辅数据文件名(ndf),
+	   filename='文件路径'
+	   [,size=文件初始大小]
+	   [,maxsize=文件最大长度|unlimited]
+	   [,filegrowth=文件增长速度]
+	),
+	Log On
+	(
+	   name=日志文件名(ldf),
+	   filename='文件路径'
+	   [,size=文件初始大小]
+	   [,maxsize=文件最大长度|unlimited]
+	   [,filegrowth=文件增长速度]
+	)
+二:修改数据库 Alter DateBase //一次只能修改一个属性
+	1. 修改数据库名称: 
+		Alter DateBase 数据库名称
+		Modify name=新的名称
+
+	2. 修改数据库文件最大大小：
+		Alter DateBase 数据库名称
+		Modify File
+		(
+		   name=要修改的数据库文件名称
+		   maxsize=unlimited //这里修改为不限制增长
+		)
+	3. 修改数据库的增长方式
+		Alter DateBase 数据库名称
+		Modify File
+		(
+		   name=要修改的数据库文件名称
+		   filegrowth=5MB //这里修改为5MB
+		)
+	4. 添加/删除数据库文件
+		Alter DateBase 数据库名称
+		Add File
+		(
+		   name=要添加的数据库文件名称
+		   filename='文件的物理路径'
+		)
+		Alter DateBase 数据库名称
+		Remove File 新添加的数据库文件名称
+	5. 添加文件组
+		Alter DateBase 数据库名称
+		Add Filegroup 文件组名称
+		go
+		(
+		   name=要添加的数据库文件名称
+		   filename='文件的物理路径'
+		)
+		to Filegroup 新建的文件组名称
+	6. 删除文件组 删除数据组之前要保证数据组为空
+		Alter DateBase 数据库名称
+		Remove File 存留在数据组中的文件
+		Alter DateBase 数据库名称
+		Remove Filegroup 数据组名称
+	7. 删除数据库 当用户处于 1)正在使用数据库 2)数据库正在恢复 3) 数据库正在被复制 的时候不能删除数据库+
+		DROP DataBase 数据库名称
